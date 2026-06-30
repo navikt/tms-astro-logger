@@ -1,25 +1,23 @@
 # @navikt/astro-logger
 
-A custom logger for [Astro 7+](https://docs.astro.build/en/reference/logger-reference/) that
-emits Nav/Grafana-friendly structured JSON logs, mirroring
-[`@navikt/pino-logger`](https://github.com/navikt/pino-logger).
+A custom logger for Astro that emits Nav/Grafana-friendly structured JSON logs.
 
 It plugs into Astro's [Logger API](https://docs.astro.build/en/reference/logger-reference/#custom-loggers)
 so that **all** of Astro's logs — and your own — are emitted in a JSON format that
-[logs.az.nav.no](https://logs.az.nav.no/) understands and Grafana Faro is happy with:
+logs.az.nav.no understands and Grafana Faro is happy with:
 
 ```json
 { "level": "info", "time": "2026-06-30T17:37:49.229Z", "label": "router", "message": "router started" }
 ```
 
-Under the hood it wraps [pino](https://getpino.io/), giving you the exact same output as
-`@navikt/pino-logger`: `message` as the message key, ISO-8601 timestamps, the level as a string
-label, and OpenTelemetry `trace_id` / `span_id` / `trace_flags` when an active span exists.
+Under the hood it wraps [pino](https://getpino.io/), giving you this output: `message` as the message key, ISO-8601 
+timestamps, the level as a string label, and OpenTelemetry `trace_id` / `span_id` / `trace_flags` when an active span
+exists.
 
 ## Installation
 
 ```bash
-npm i @navikt/astro-logger pino
+pnpm i @navikt/astro-logger pino
 ```
 
 `astro` (>= 7) and `pino` (8/9/10) are peer dependencies. If you want
