@@ -20,7 +20,7 @@ exists.
 pnpm i @navikt/astro-logger pino
 ```
 
-`astro` (>= 7) and `pino` (8/9/10) are peer dependencies. If you want
+`astro` and `pino` are peer dependencies. If you want
 [team logs](https://docs.nais.io/observability/logging/how-to/team-logs), also install `pino-socket`:
 
 ```bash
