@@ -19,8 +19,7 @@
     },
     "types": "./dist/index.d.ts",
     "exports": {
-        ".": "./dist/index.js",
-        "./team-log": "./dist/team-log/index.js"
+        ".": "./dist/index.js"
     },
     "scripts": {
         "build": "tsup",
@@ -33,9 +32,6 @@
     },
     "dependencies": {
         "@opentelemetry/api": "^1.9.0"
-    },
-    "optionalDependencies": {
-        "pino-socket": "7.4.0"
     },
     "devDependencies": {
         "@types/node": "^24.10.9",

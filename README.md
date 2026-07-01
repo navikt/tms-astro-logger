@@ -3,8 +3,9 @@
 A custom logger for Astro that emits Nav/Grafana-friendly structured JSON logs.
 
 It plugs into Astro's [Logger API](https://docs.astro.build/en/reference/logger-reference/#custom-loggers)
-so that **all** of Astro's logs — and your own — are emitted in a JSON format that
-logs.az.nav.no understands and Grafana Faro is happy with:
+so that **all** of Astro's logs — and your own, via
+[`Astro.logger`](https://docs.astro.build/en/reference/api-reference/#logger) — are emitted in a JSON
+format that logs.az.nav.no understands and Grafana Faro is happy with:
 
 ```json
 { "level": "info", "time": "2026-06-30T17:37:49.229Z", "label": "router", "message": "router started" }
@@ -20,12 +21,7 @@ exists.
 pnpm i @navikt/astro-logger pino
 ```
 
-`astro` and `pino` are peer dependencies. If you want
-[team logs](https://docs.nais.io/observability/logging/how-to/team-logs), also install `pino-socket`:
-
-```bash
-npm i pino-socket
-```
+`astro` and `pino` are peer dependencies.
 
 ## Step 1: Register the Astro logger
 
@@ -50,15 +46,31 @@ export default defineConfig({
 
 > When you define a custom logger, you are in charge of all logs, even the ones emitted by Astro.
 
-## Step 2: Log from your application code
+## Step 2: Log from your application code with `Astro.logger`
 
-For SSR endpoints, middleware and server utilities, import the ready-to-use pino `logger`:
+Use the built-in [`Astro.logger`](https://docs.astro.build/en/reference/api-reference/#logger) (also available as
+`context.logger` in endpoints and middleware). Because it flows through the custom logger registered above, every
+message is emitted in the Nav/Grafana JSON format automatically.
+
+In `.astro` components:
+
+```astro
+---
+Astro.logger.info('Hello from the server')
+Astro.logger.warn('Something looks off')
+Astro.logger.error("Can't find the checkout ID.")
+---
+```
+
+In endpoints and middleware:
 
 ```ts
-import { logger } from '@navikt/astro-logger'
+import type { APIContext } from 'astro'
 
-logger.info('Hello from the server')
-logger.warn({ userId }, 'Something looks off')
+export function GET({ logger }: APIContext) {
+    logger.info('Handling request')
+    return new Response('ok')
+}
 ```
 
 The log level is read from `process.env.LOG_LEVEL` (defaults to `info`).
@@ -79,31 +91,12 @@ npm i -D pino-pretty
 }
 ```
 
-## Team logs (secure logs)
-
-For secure [team logs](https://docs.nais.io/observability/logging/how-to/team-logs), use the
-`./team-log` subpath. In production it ships logs over `pino-socket` to `team-logs.nais-system`;
-locally it logs to stdout/stderr.
-
-```ts
-import { teamLogger } from '@navikt/astro-logger/team-log'
-
-teamLogger.info('Sensitive information that should go to team logs')
-```
-
-This requires the NAIS environment variables (`GOOGLE_CLOUD_PROJECT`, `NAIS_NAMESPACE`,
-`NAIS_POD_NAME`/`HOSTNAME`, `NAIS_APP_NAME`) to be present in production.
-
 ## API
 
 | Export | From | Description |
 | --- | --- | --- |
 | `default` (`createAstroLogger`) | `@navikt/astro-logger` | Astro logger entrypoint factory returning an `AstroLoggerDestination`. |
 | `createAstroLogger(options?)` | `@navikt/astro-logger` | Same as the default export, named. |
-| `logger` | `@navikt/astro-logger` | Ready-to-use pino instance for application code. |
-| `createLogger(config?, destination?)` | `@navikt/astro-logger` | Factory for additional pino instances. |
-| `teamLogger` | `@navikt/astro-logger/team-log` | Ready-to-use secure (team) logger. |
-| `createTeamLogger(config?)` | `@navikt/astro-logger/team-log` | Factory for additional team loggers. |
 
 ### `AstroLoggerOptions`
 
