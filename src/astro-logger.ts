@@ -39,8 +39,8 @@ const writeWithLevel = (logger: ReturnType<typeof createLogger>, message: AstroL
 }
 
 /**
- * Creates an Astro custom logger that emits the same Nav/Grafana-friendly JSON
- * logs as `@navikt/pino-logger`. Wire it up in `astro.config.mjs`:
+ * Creates an Astro custom logger that emits Nav/Grafana-friendly JSON.
+ * Wire it up in `astro.config.mjs`:
  *
  * ```js
  * import { defineConfig } from 'astro/config'
