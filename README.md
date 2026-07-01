@@ -1,31 +1,31 @@
 # @navikt/astro-logger
 
-A custom logger for Astro that emits Nav/Grafana-friendly structured JSON logs.
+En egendefinert logger for Astro som sender ut strukturerte JSON-logger tilpasset Nav/Grafana.
 
-It plugs into Astro's [Logger API](https://docs.astro.build/en/reference/logger-reference/#custom-loggers)
-so that **all** of Astro's logs — and your own, via
-[`Astro.logger`](https://docs.astro.build/en/reference/api-reference/#logger) — are emitted in a JSON
-format that logs.az.nav.no understands and Grafana Faro is happy with:
+Den kobler seg på Astros [Logger-API](https://docs.astro.build/en/reference/logger-reference/#custom-loggers)
+slik at **alle** Astros logger — og dine egne, via
+[`Astro.logger`](https://docs.astro.build/en/reference/api-reference/#logger) — sendes ut i et JSON-format
+som logs.az.nav.no forstår og som Grafana Faro er fornøyd med:
 
 ```json
 { "level": "info", "time": "2026-06-30T17:37:49.229Z", "label": "router", "message": "router started" }
 ```
 
-Under the hood it wraps [pino](https://getpino.io/), giving you this output: `message` as the message key, ISO-8601 
-timestamps, the level as a string label, and OpenTelemetry `trace_id` / `span_id` / `trace_flags` when an active span
-exists.
+Under panseret bruker den [pino](https://getpino.io/), som gir deg denne utskriften: `message` som meldingsnøkkel,
+ISO-8601-tidsstempler, nivået som en tekstetikett, og OpenTelemetry `trace_id` / `span_id` / `trace_flags` når det
+finnes et aktivt span.
 
-## Installation
+## Installasjon
 
 ```bash
 pnpm i @navikt/astro-logger pino
 ```
 
-`astro` and `pino` are peer dependencies.
+`astro` og `pino` er peer-avhengigheter.
 
-## Step 1: Register the Astro logger
+## Steg 1: Registrer Astro-loggeren
 
-Point Astro's `logger.entrypoint` at this package in `astro.config.mjs`:
+Pek Astros `logger.entrypoint` til denne pakken i `astro.config.mjs`:
 
 ```js
 import { defineConfig } from 'astro/config'
@@ -35,8 +35,8 @@ export default defineConfig({
 })
 ```
 
-You can optionally pass serializable options. The log `level` defaults to
-`process.env.LOG_LEVEL`, falling back to `info`:
+Du kan valgfritt sende med serialiserbare opsjoner. Loggnivået `level` er som standard
+`process.env.LOG_LEVEL`, og faller tilbake til `info`:
 
 ```js
 export default defineConfig({
@@ -44,40 +44,40 @@ export default defineConfig({
 })
 ```
 
-> When you define a custom logger, you are in charge of all logs, even the ones emitted by Astro.
+> Når du definerer en egendefinert logger, har du ansvaret for alle logger, også de som Astro selv sender ut.
 
-## Step 2: Log from your application code with `Astro.logger`
+## Steg 2: Logg fra applikasjonskoden din med `Astro.logger`
 
-Use the built-in [`Astro.logger`](https://docs.astro.build/en/reference/api-reference/#logger) (also available as
-`context.logger` in endpoints and middleware). Because it flows through the custom logger registered above, every
-message is emitted in the Nav/Grafana JSON format automatically.
+Bruk den innebygde [`Astro.logger`](https://docs.astro.build/en/reference/api-reference/#logger) (også tilgjengelig som
+`context.logger` i endepunkter og mellomvare). Fordi den går gjennom den egendefinerte loggeren du registrerte over,
+sendes hver melding automatisk ut i JSON-formatet for Nav/Grafana.
 
-In `.astro` components:
+I `.astro`-komponenter:
 
 ```astro
 ---
-Astro.logger.info('Hello from the server')
-Astro.logger.warn('Something looks off')
-Astro.logger.error("Can't find the checkout ID.")
+Astro.logger.info('Hei fra serveren')
+Astro.logger.warn('Noe ser feil ut')
+Astro.logger.error('Finner ikke checkout-IDen.')
 ---
 ```
 
-In endpoints and middleware:
+I endepunkter og mellomvare:
 
 ```ts
 import type { APIContext } from 'astro'
 
 export function GET({ logger }: APIContext) {
-    logger.info('Handling request')
+    logger.info('Håndterer forespørsel')
     return new Response('ok')
 }
 ```
 
-The log level is read from `process.env.LOG_LEVEL` (defaults to `info`).
+Loggnivået leses fra `process.env.LOG_LEVEL` (er som standard `info`).
 
-## Step 3: pino-pretty for local development (optional)
+## Steg 3: pino-pretty for lokal utvikling (valgfritt)
 
-Pipe your dev server output through `pino-pretty` with the correct message key:
+Send utskriften fra dev-serveren gjennom `pino-pretty` med riktig meldingsnøkkel:
 
 ```bash
 npm i -D pino-pretty
@@ -93,18 +93,18 @@ npm i -D pino-pretty
 
 ## API
 
-| Export | From | Description |
+| Eksport | Fra | Beskrivelse |
 | --- | --- | --- |
-| `default` (`createAstroLogger`) | `@navikt/astro-logger` | Astro logger entrypoint factory returning an `AstroLoggerDestination`. |
-| `createAstroLogger(options?)` | `@navikt/astro-logger` | Same as the default export, named. |
+| `default` (`createAstroLogger`) | `@navikt/astro-logger` | Fabrikk for Astro-logger-entrypoint som returnerer en `AstroLoggerDestination`. |
+| `createAstroLogger(options?)` | `@navikt/astro-logger` | Det samme som standardeksporten, navngitt. |
 
 ### `AstroLoggerOptions`
 
-| Option | Type | Default | Description |
+| Opsjon | Type | Standard | Beskrivelse |
 | --- | --- | --- | --- |
-| `level` | `'debug' \| 'info' \| 'warn' \| 'error' \| 'silent'` | `LOG_LEVEL` or `info` | Minimum level of logs to print. |
-| `pino` | `pino.LoggerOptions` | `{}` | Advanced pino options forwarded to the underlying logger. |
+| `level` | `'debug' \| 'info' \| 'warn' \| 'error' \| 'silent'` | `LOG_LEVEL` eller `info` | Laveste loggnivå som skal skrives ut. |
+| `pino` | `pino.LoggerOptions` | `{}` | Avanserte pino-opsjoner som videresendes til den underliggende loggeren. |
 
-## License
+## Lisens
 
 MIT
