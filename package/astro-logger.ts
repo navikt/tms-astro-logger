@@ -1,6 +1,6 @@
 import type { AstroLoggerDestination, AstroLoggerLevel, AstroLoggerMessage } from 'astro'
 import { matchesLevel } from 'astro/logger'
-import type { LoggerOptions } from 'pino'
+import type { DestinationStream, LoggerOptions } from 'pino'
 
 import { createLogger } from './logger'
 
@@ -53,11 +53,16 @@ const writeWithLevel = (logger: ReturnType<typeof createLogger>, message: AstroL
  * When configured, this logger takes over *all* of Astro's logging output,
  * including Astro's own internal logs, and formats them as structured JSON
  * with ISO timestamps, a string level label, and OpenTelemetry trace fields.
+ *
+ * The optional `destination` lets callers redirect output (defaults to stdout).
  */
-export const createAstroLogger = (options: AstroLoggerOptions = {}): AstroLoggerDestination<AstroLoggerMessage> => {
+export const createAstroLogger = (
+    options: AstroLoggerOptions = {},
+    destination?: DestinationStream,
+): AstroLoggerDestination<AstroLoggerMessage> => {
     const level: AstroLoggerLevel = options.level ?? (process.env.LOG_LEVEL as AstroLoggerLevel | undefined) ?? 'info'
 
-    const logger = createLogger(options.pino)
+    const logger = createLogger(options.pino, destination)
     // Level filtering is delegated to Astro's `matchesLevel` below, so the
     // underlying pino instance must not filter anything out itself.
     logger.level = 'trace'
