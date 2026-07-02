@@ -17,7 +17,7 @@
         "forceConsistentCasingInFileNames": true
     },
     "include": [
-        "src"
+        "package"
     ],
     "exclude": [
       "dist", "node_modules", "**/*.test.ts"]
