@@ -1,6 +1,6 @@
 {
     "name": "@navikt/astro-logger",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "license": "MIT",
     "type": "module",
     "packageManager": "pnpm@10.33.0",
